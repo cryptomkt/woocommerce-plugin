@@ -4,7 +4,7 @@ This is a Community-supported project.
 
 If you are interested in becoming a maintainer of this project, please contact us at integrations@cryptomarket.com. Developers at cryptomarket will attempt to work along the new maintainers to ensure the project remains viable for the foreseeable future.
 
-WooCommerce cryptomarket Payment Gateway
+WooCommerce CryptoMarket Payment Gateway
 =====================
 
 ## Build Status
