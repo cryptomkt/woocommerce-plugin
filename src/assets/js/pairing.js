@@ -1,6 +1,6 @@
 /**
- * @license Copyright 2011-2014 BitPay Inc., MIT License
- * see https://github.com/bitpay/woocommerce-bitpay/blob/master/LICENSE
+ * @license Copyright 2011-2014 cryptomarket Inc., MIT License
+ * see https://github.com/cryptomarket/woocommerce-cryptomarket/blob/master/LICENSE
  */
 
 'use strict';
@@ -13,81 +13,81 @@
      * Update the API Token helper link on Network selection
     */
 
-    $('#bitpay_api_token_form').on('change', '.bitpay-pairing__network', function (e) {
+    $('#cryptomarket_api_token_form').on('change', '.cryptomarket-pairing__network', function (e) {
 
       // Helper urls
-      var livenet = 'https://bitpay.com/api-tokens';
-      var testnet = 'https://test.bitpay.com/api-tokens';
+      var livenet = 'https://cryptomarket.com/api-tokens';
+      var testnet = 'https://test.cryptomarket.com/api-tokens';
 
-      if ($('.bitpay-pairing__network').val() === 'livenet') {
-        $('.bitpay-pairing__link').attr('href', livenet).html(livenet);
+      if ($('.cryptomarket-pairing__network').val() === 'livenet') {
+        $('.cryptomarket-pairing__link').attr('href', livenet).html(livenet);
       } else {
-        $('.bitpay-pairing__link').attr('href', testnet).html(testnet);
+        $('.cryptomarket-pairing__link').attr('href', testnet).html(testnet);
       }
 
     });
 
     /**
-     * Try to pair with BitPay using an entered pairing code
+     * Try to pair with cryptomarket using an entered pairing code
     */
-    $('#bitpay_api_token_form').on('click', '.bitpay-pairing__find', function (e) {
+    $('#cryptomarket_api_token_form').on('click', '.cryptomarket-pairing__find', function (e) {
 
       // Don't submit any forms or follow any links
       e.preventDefault();
 
       // Hide the pairing code form
-      $('.bitpay-pairing').hide();
-      $('.bitpay-pairing').after('<div class="bitpay-pairing__loading" style="width: 20em; text-align: center"><img src="'+ajax_loader_url+'"></div>');
+      $('.cryptomarket-pairing').hide();
+      $('.cryptomarket-pairing').after('<div class="cryptomarket-pairing__loading" style="width: 20em; text-align: center"><img src="'+ajax_loader_url+'"></div>');
 
-      // Attempt the pair with BitPay
-      $.post(BitpayAjax.ajaxurl, {
-        'action':       'bitpay_pair_code',
-        'pairing_code': $('.bitpay-pairing__code').val(),
-        'network':      $('.bitpay-pairing__network').val(),
-        'pairNonce':    BitpayAjax.pairNonce
+      // Attempt the pair with cryptomarket
+      $.post(cryptomarketAjax.ajaxurl, {
+        'action':       'cryptomarket_pair_code',
+        'pairing_code': $('.cryptomarket-pairing__code').val(),
+        'network':      $('.cryptomarket-pairing__network').val(),
+        'pairNonce':    cryptomarketAjax.pairNonce
       })
       .done(function (data) {
 
-        $('.bitpay-pairing__loading').remove();
+        $('.cryptomarket-pairing__loading').remove();
 
         // Make sure the data is valid
         if (data && data.sin && data.label) {
 
           // Set the token values on the template
-          $('.bitpay-token').removeClass('bitpay-token--livenet').removeClass('bitpay-token--testnet').addClass('bitpay-token--'+data.network);
-          $('.bitpay-token__token-label').text(data.label);
-          $('.bitpay-token__token-sin').text(data.sin);
+          $('.cryptomarket-token').removeClass('cryptomarket-token--livenet').removeClass('cryptomarket-token--testnet').addClass('cryptomarket-token--'+data.network);
+          $('.cryptomarket-token__token-label').text(data.label);
+          $('.cryptomarket-token__token-sin').text(data.sin);
 
           // Display the token and success notification
-          $('.bitpay-token').hide().removeClass('bitpay-token--hidden').fadeIn(500);
-          $('.bitpay-pairing__code').val('');
-          $('.bitpay-pairing__network').val('livenet');
+          $('.cryptomarket-token').hide().removeClass('cryptomarket-token--hidden').fadeIn(500);
+          $('.cryptomarket-pairing__code').val('');
+          $('.cryptomarket-pairing__network').val('livenet');
           $('#message').remove();
-          $('h2.woo-nav-tab-wrapper').after('<div id="message" class="updated fade"><p><strong>You have been paired with your BitPay account!</strong></p></div>');
+          $('h2.woo-nav-tab-wrapper').after('<div id="message" class="updated fade"><p><strong>You have been paired with your cryptomarket account!</strong></p></div>');
         }
         // Pairing failed
         else if (data && data.success === false) {
-          $('.bitpay-pairing').show();
-          alert('Unable to pair with BitPay.');
+          $('.cryptomarket-pairing').show();
+          alert('Unable to pair with cryptomarket.');
         }
 
       });
     });
 
     // Revoking Token
-    $('#bitpay_api_token_form').on('click', '.bitpay-token__revoke', function (e) {
+    $('#cryptomarket_api_token_form').on('click', '.cryptomarket-token__revoke', function (e) {
 
       // Don't submit any forms or follow any links
       e.preventDefault();
 
       if (confirm('Are you sure you want to revoke the token?')) {
-        $.post(BitpayAjax.ajaxurl, {
-          'action': 'bitpay_revoke_token',
-          'revokeNonce':    BitpayAjax.revokeNonce
+        $.post(cryptomarketAjax.ajaxurl, {
+          'action': 'cryptomarket_revoke_token',
+          'revokeNonce':    cryptomarketAjax.revokeNonce
         })
         .always(function (data) {
-          $('.bitpay-token').fadeOut(500, function () {
-            $('.bitpay-pairing').removeClass('.bitpay-pairing--hidden').show();
+          $('.cryptomarket-token').fadeOut(500, function () {
+            $('.cryptomarket-pairing').removeClass('.cryptomarket-pairing--hidden').show();
             $('#message').remove();
             $('h2.woo-nav-tab-wrapper').after('<div id="message" class="updated fade"><p><strong>You have revoked your token!</strong></p></div>');
           });

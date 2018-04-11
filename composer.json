@@ -2,7 +2,7 @@
 	"repositories": [
         {
             "type": "git",
-            "url": "https://github.com/bitpay/php-bitpay-client.git"
+            "url": "https://github.com/cryptomarket/php-cryptomarket-client.git"
         },
         {
           "type": "package",
@@ -17,7 +17,7 @@
         }
     ],
     "require": {
-        "bitpay/php-client": "~2.2"
+        "cryptomarket/cryptomkt": "~1.1.x-dev"
     },
 	"require-dev": {
         "wp-cli/wp-cli": "*",

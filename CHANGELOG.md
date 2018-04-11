@@ -10,7 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.2.13] - 2018-01-09
 ### Fixed
 - wrong function call resulting in undefined wc_reduce_stock_levels() (#84)
-- syntax error in class-wc-gateway-bitpay.php (#80)
+- syntax error in class-wc-gateway-cryptomarket.php (#80)
 - Price must be formatted as a float (#78)
 
 ### Added
@@ -18,8 +18,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.2.12] - 2017-09-29
 ### Fixed
-- Removed non-working option to disable BitPay from the BitPay plugin config page
-- Populate buyer email when creating BitPay invoice
+- Removed non-working option to disable cryptomarket from the cryptomarket plugin config page
+- Populate buyer email when creating cryptomarket invoice
 - WC v3 compatibility fixes
 - Change Mcrypt to OpenSSL (#77)
 
@@ -53,7 +53,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.2.5] - 2015-04-02
 ### Fixed
-- Bundled BitPay PHP Client for releases now includes entire client
+- Bundled cryptomarket PHP Client for releases now includes entire client
 
 ## [2.2.4] - 2015-03-09
 ### Added
@@ -70,7 +70,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.2.2] - 2015-01-13
 ### Fixed
 - Checkout error message when invoice can't be generated
-- Admin error message when pairing with BitPay fails
+- Admin error message when pairing with cryptomarket fails
 
 ## [2.2.1] - 2014-12-10
 ### Fixed
@@ -85,7 +85,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.1.0] - 2014-11-28
 ### Changed
-- Uses newer BitPay Library that no longer solely requires GMP, but can use BCMath as an alternative
+- Uses newer cryptomarket Library that no longer solely requires GMP, but can use BCMath as an alternative
 
 ## [2.0.2] - 2014-11-20
 ### Fixed
@@ -97,17 +97,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 2.0.0 - 2014-11-18
 ### Changed
-- Implements BitPay's new cryptographically secure authentication.
+- Implements cryptomarket's new cryptographically secure authentication.
 
-[unreleased]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.7...HEAD
-[2.2.7]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.6...v2.2.7
-[2.2.6]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.5...v2.2.6
-[2.2.5]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.4...v2.2.5
-[2.2.4]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.3...v2.2.4
-[2.2.3]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.2...v2.2.3
-[2.2.2]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.1...v2.2.2
-[2.2.1]: https://github.com/bitpay/woocommerce-plugin/compare/v2.2.0...v2.2.1
-[2.2.0]: https://github.com/bitpay/woocommerce-plugin/compare/v2.1.0...v2.2.0
-[2.1.0]: https://github.com/bitpay/woocommerce-plugin/compare/v2.0.2...v2.1.0
-[2.0.2]: https://github.com/bitpay/woocommerce-plugin/compare/v2.0.1...v2.0.2
-[2.0.1]: https://github.com/bitpay/woocommerce-plugin/compare/v2.0.0...v2.0.1
+[unreleased]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.2.7...HEAD
+[2.2.7]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.2.6...v2.2.7
+[2.2.6]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.2.5...v2.2.6
+[2.2.5]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.2.4...v2.2.5
+[2.2.4]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.2.3...v2.2.4
+[2.2.3]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.2.2...v2.2.3
+[2.2.2]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.2.1...v2.2.2
+[2.2.1]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.2.0...v2.2.1
+[2.2.0]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.1.0...v2.2.0
+[2.1.0]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.0.2...v2.1.0
+[2.0.2]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.0.1...v2.0.2
+[2.0.1]: https://github.com/cryptomarket/woocommerce-plugin/compare/v2.0.0...v2.0.1

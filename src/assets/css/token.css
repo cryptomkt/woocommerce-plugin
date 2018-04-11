@@ -1,5 +1,5 @@
 @import url("//fonts.googleapis.com/css?family=Ubuntu:400");
-.bitpay-token {
+.cryptomarket-token {
 	background: #002855;
 	font-family: 'Ubuntu', sans-serif;
 	color: #fff;
@@ -9,46 +9,46 @@
 	padding-bottom: 1em;
 	border-radius: 4px;
 }
-.bitpay-token--hidden {
+.cryptomarket-token--hidden {
 	display: none;
 }
-.bitpay-token--testnet {
+.cryptomarket-token--testnet {
 	border-color: #cc0;
 }
-.bitpay-token__prop {
+.cryptomarket-token__prop {
 	padding: 0 1em;
 	font-size: 0.85em;
 	color: #ccddff;
 }
-.bitpay-token__label {
+.cryptomarket-token__label {
 	color: #fff;
 	display: inline-block;
 	min-width: 4em;
 }
-.bitpay-token__header {
+.cryptomarket-token__header {
 	margin-bottom: 0.5em;
 	white-space: nowrap;
 }
-.bitpay-token__logo {
+.cryptomarket-token__logo {
 	width: 5em;
 	display: inline-block;
 	box-sizing: border-box;
 	text-align: center;
 	margin-right: 3em;
 }
-.bitpay-token__logo img {
+.cryptomarket-token__logo img {
 	margin-bottom: -13px;
 }
-.bitpay-token__logo:after {
+.cryptomarket-token__logo:after {
 	content: "Livenet";
 	display: inline;
 	color: #0f0;
 }
-.bitpay-token--testnet .bitpay-token__logo:after {
+.cryptomarket-token--testnet .cryptomarket-token__logo:after {
 	content: "Testnet";
 	color: #cc0;
 }
-.bitpay-token__revoke {
+.cryptomarket-token__revoke {
 	display: block;
 	float: right;
 	padding: 0.5em 0.75em;

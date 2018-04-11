@@ -6,6 +6,7 @@
 /docs/_build/
 /vendor/
 /.settings/
+/.phpintel/
 .project
 .buildpath
 composer.lock

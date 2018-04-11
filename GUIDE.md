@@ -1,10 +1,10 @@
-# Using the BitPay plugin for WooCommerce
+# Using the cryptomarket plugin for WooCommerce
 
 ## Prerequisites
 
 * Last Version Tested: Wordpress 4.5.2 WooCommerce 2.5.5
 
-You must have a BitPay merchant account to use this plugin.  It's free to [sign-up for a BitPay merchant account](https://bitpay.com/start).
+You must have a cryptomarket merchant account to use this plugin.  It's free to [sign-up for a cryptomarket merchant account](https://cryptomarket.com/start).
 
 
 ## Server Requirements
@@ -26,12 +26,12 @@ sudo apachectl restart
 
 ### When Upgrading From Version 1.x to 2.x
 
-**Please Note:** Merchants who have a previous version of the WooCommerce BitPay Payment Gateway will need to remove it.
+**Please Note:** Merchants who have a previous version of the WooCommerce cryptomarket Payment Gateway will need to remove it.
 This can be done by going to the Wordpress's Adminstration Panels > Plugins.  Deactivate the old plugin, then delete it.
 
 ### When Installing From the Downloadable Archive
 
-Visit the [Releases](https://github.com/bitpay/woocommerce-plugin/releases) page of this repository and download the latest version. Once this is done, you can just go to Wordpress's Adminstration Panels > Plugins > Add New > Upload Plugin, select the downloaded archive and click Install Now. After the plugin is installed, click on Activate.
+Visit the [Releases](https://github.com/cryptomarket/woocommerce-plugin/releases) page of this repository and download the latest version. Once this is done, you can just go to Wordpress's Adminstration Panels > Plugins > Add New > Upload Plugin, select the downloaded archive and click Install Now. After the plugin is installed, click on Activate.
 
 
 **WARNING:** It is good practice to backup your database before installing plugins. Please make sure you create backups.
@@ -40,18 +40,18 @@ Visit the [Releases](https://github.com/bitpay/woocommerce-plugin/releases) page
 ## Configuration
 
 Configuration can be done using the Administrator section of Wordpress.
-Once Logged in, you will find the configuration settings under **WooCommerce > Settings > Checkout > BitPay**.
+Once Logged in, you will find the configuration settings under **WooCommerce > Settings > Checkout > cryptomarket**.
 Alternatively, you can also get to the configuration settings via Plugins and clicking the Settings link for this plugin.
 
-![BitPay Settings](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/admin.png "BitPay Settings")
+![cryptomarket Settings](https://raw.githubusercontent.com/cryptomarket/woocommerce-plugin/master/docs/img/admin.png "cryptomarket Settings")
 
-Here your will need to create a [pairing code](https://bitpay.com/api-tokens) using
-your BitPay merchant account. Once you have a Pairing Code, put the code in the
+Here your will need to create a [pairing code](https://cryptomarket.com/api-tokens) using
+your cryptomarket merchant account. Once you have a Pairing Code, put the code in the
 Pairing Code field:
-![Pairing Code field](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/pairingcode.png "Pairing Code field")
+![Pairing Code field](https://raw.githubusercontent.com/cryptomarket/woocommerce-plugin/master/docs/img/pairingcode.png "Pairing Code field")
 
 On success, you'll receive a token:
-![BitPay Token](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/token.png "Bitpay Token")
+![cryptomarket Token](https://raw.githubusercontent.com/cryptomarket/woocommerce-plugin/master/docs/img/token.png "cryptomarket Token")
 
 **NOTE:** Pairing Codes are only valid for a short period of time. If it expires
 before you get to use it, you can always create a new one and pair with it.
@@ -60,17 +60,17 @@ before you get to use it, you can always create a new one and pair with it.
 extension will generate public and private keys that are used to identify you
 when using the API.
 
-You are also able to configure how BitPay's IPN (Instant Payment Notifications)
+You are also able to configure how cryptomarket's IPN (Instant Payment Notifications)
 changes the order in your WooCommerce store.
 
-![Invoice Settings](https://raw.githubusercontent.com/bitpay/woocommerce-plugin/master/docs/img/ordersettings.png "Invoice Settings")
+![Invoice Settings](https://raw.githubusercontent.com/cryptomarket/woocommerce-plugin/master/docs/img/ordersettings.png "Invoice Settings")
 
 Save your changes and you're good to go!
 
 ## Usage
 
 Once enabled, your customers will be given the option to pay with Bitcoins. Once
-they checkout they are redirected to a full screen BitPay invoice to pay for
+they checkout they are redirected to a full screen cryptomarket invoice to pay for
 the order.
 
 As a merchant, the orders in your WooCommerce store can be treated as any other
