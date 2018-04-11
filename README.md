@@ -59,13 +59,13 @@ $ ./node_modules/.bin/grunt build
 
 ## Support
 
-### cryptomarket Support
+### Cryptomarket Support
 
 * Last Version Tested: Wordpress 4.8.1 WooCommerce 3.1.2
 * [GitHub Issues](https://github.com/cryptomarket/woocommerce-plugin/issues)
   * Open an issue if you are having issues with this plugin.
 * [Support](https://help.cryptomarket.com)
-  * cryptomarket merchant support documentation
+  * Cryptomarket merchant support documentation
 
 ### WooCommerce Support
 
