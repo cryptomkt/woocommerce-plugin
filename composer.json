@@ -1,10 +1,6 @@
 {
 	"repositories": [
         {
-            "type": "git",
-            "url": "https://github.com/cryptomarket/php-cryptomarket-client.git"
-        },
-        {
           "type": "package",
           "package": {
             "name": "wordpress",
@@ -17,7 +13,7 @@
         }
     ],
     "require": {
-        "cryptomarket/cryptomkt": "~1.1.x-dev"
+        "cryptomkt/cryptomkt": "1.1.x-dev"
     },
 	"require-dev": {
         "wp-cli/wp-cli": "*",
