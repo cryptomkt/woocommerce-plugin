@@ -42,7 +42,7 @@ module.exports = function(grunt) {
           },
           {
             expand: true,
-            cwd: 'vendor/cryptomarket/php-client/src/',
+            cwd: 'vendor/',
             src: ['**/**.*'],
             dest: 'dist/cryptomarket-for-woocommerce/lib'
           },

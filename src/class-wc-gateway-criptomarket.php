@@ -19,7 +19,7 @@ if (false === defined('ABSPATH')) {
 }
 
 //composer autoload
-$loader = require __DIR__ . 'vendor/autoload.php';
+$loader = require __DIR__ . '/lib/autoload.php';
 $loader->add('Cryptomkt\\Exchange\\Client', __DIR__);
 $loader->add('Cryptomkt\\Exchange\\Configuration as CMConfiguration', __DIR__);
 
@@ -27,8 +27,8 @@ $loader->add('Cryptomkt\\Exchange\\Configuration as CMConfiguration', __DIR__);
 add_action('plugins_loaded', 'woocommerce_cryptomarket_init', 0);
 register_activation_hook(__FILE__, 'woocommerce_cryptomarket_activate');
 
-function woocommerceCryptomarketInit() {
-    class WcGatewayCryptomarket extends WC_Payment_Gateway {
+function woocommerce_cryptomarket_init() {
+    class WC_Gateway_cryptomarket extends WC_Payment_Gateway {
         private $is_initialized = false;
         private $client;
 
@@ -41,8 +41,8 @@ function woocommerceCryptomarketInit() {
             $this->icon = plugin_dir_url(__FILE__) . 'assets/img/icon.png';
             $this->has_fields = false;
             $this->order_button_text = __('Proceed to cryptomarket', 'cryptomarket');
-            $this->method_title = 'cryptomarket';
-            $this->method_description = 'Cryptomarket allows you to accept ethereum payments on your WooCommerce store.';
+            $this->method_title = 'Cryptomarket';
+            $this->method_description = 'Cryptomarket allows you to accept Ethereum payments on your WooCommerce store.';
 
             // Load the settings.
             $this->initFormFields();
@@ -103,7 +103,7 @@ function woocommerceCryptomarketInit() {
             $currency = get_woocommerce_currency();
 
             try {
-                $result = $this->client->getTicker(array('market' => 'ETH' . $currency->iso_code));
+                $result = $this->client->getTicker(array('market' => 'ETH' . $currency));
             } catch (Exception $e) {
                 $this->log('Currency does not supported: ' . $currency);
                 throw new \Exception('Currency does not supported: ' . $currency);
@@ -266,7 +266,7 @@ function woocommerceCryptomarketInit() {
     /**
      * Add cryptomarket Payment Gateway to WooCommerce
      **/
-    function wcAddCryptomarket($methods) {
+    function wc_add_cryptomarket($methods) {
         $methods[] = 'WC_Gateway_cryptomarket';
 
         return $methods;
@@ -279,7 +279,7 @@ function woocommerceCryptomarketInit() {
      **/
     add_filter('plugin_action_links', 'cryptomarket_plugin_action_links', 10, 2);
 
-    function cryptomarketPluginActionLinks($links, $file) {
+    function cryptomarket_plugin_action_links($links, $file) {
         static $this_plugin;
 
         if (false === isset($this_plugin) || true === empty($this_plugin)) {
@@ -363,7 +363,7 @@ function woocommerceCryptomarketFailedRequirements() {
 }
 
 // Activating the plugin
-function woocommerceCryptomarketActivate() {
+function woocommerce_cryptomarket_activate() {
     // Check for Requirements
     $failed = woocommerceCryptomarketFailedRequirements();
 
