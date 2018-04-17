@@ -45,7 +45,7 @@ function woocommerce_cryptomarket_init() {
             $this->method_description = 'Cryptomarket allows you to accept Ethereum payments on your WooCommerce store.';
 
             // Load the settings.
-            $this->initFormFields();
+            $this->init_form_fields();
             $this->init_settings();
 
             // Define user set variables
@@ -73,16 +73,16 @@ function woocommerce_cryptomarket_init() {
 
             // Actions
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
-            add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'save_order_states'));
+            // add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'save_order_states'));
 
             // Valid for use and IPN Callback
-            if (false === $this->isValidForUse()) {
+            if (false === $this->is_valid_for_use()) {
                 $this->enabled = 'no';
                 $this->log('[Info] The plugin is NOT valid for use!');
             } else {
                 $this->enabled = 'yes';
                 $this->log('[Info] The plugin is ok to use.');
-                add_action('woocommerce_api_wc_gateway_cryptomarket', array($this, 'ipn_callback'));
+                // add_action('woocommerce_api_wc_gateway_cryptomarket', array($this, 'ipn_callback'));
             }
 
             $this->is_initialized = true;
@@ -91,7 +91,7 @@ function woocommerce_cryptomarket_init() {
         public function __destruct() {
         }
 
-        public function isValidForUse() {
+        public function is_valid_for_use() {
             // Check that API credentials are set
             if (true === is_null($this->payment_receiver) ||
                 true === is_null($this->api_key) ||
@@ -117,7 +117,7 @@ function woocommerce_cryptomarket_init() {
         /**
          * Initialise Gateway Settings Form Fields
          */
-        public function initFormFields() {
+        public function init_form_fields() {
             $this->log('[Info] Entered init_form_fields()...');
             $log_file = 'cryptomarket-' . sanitize_file_name(wp_hash('cryptomarket')) . '-log';
             $logs_href = get_bloginfo('wpurl') . '/wp-admin/admin.php?page=wc-status&tab=logs&log_file=' . $log_file;
@@ -137,15 +137,31 @@ function woocommerce_cryptomarket_init() {
                     'default' => 'You will be redirected to cryptomkt.com to complete your purchase.',
                     'desc_tip' => true,
                 ),
-                'api_token' => array(
+                'payment_receiver' => array(
+                    'title' => __('Payment Receiver', 'cryptomarket'),
+                    'type' => 'text',
+                    'description' => __('Email from .', 'cryptomarket'),
+                    'default' => __('user@domain.com', 'cryptomarket'),
+                    'desc_tip' => true,
+                ),
+                'api_key' => array(
+                    'title' => __('API Key', 'cryptomarket'),
                     'type' => 'api_token',
+                    'description' => __('API Key of you CryptoMarket account.', 'cryptomarket'),
+                    'desc_tip' => true,
+                ),
+                'api_secret' => array(
+                    'title' => __('API Secret', 'cryptomarket'),
+                    'type' => 'api_token',
+                    'description' => __('API Secret of you CryptoMarket account.', 'cryptomarket'),
+                    'desc_tip' => true,
                 ),
                 'debug' => array(
                     'title' => __('Debug Log', 'cryptomarket'),
                     'type' => 'checkbox',
                     'label' => sprintf(__('Enable logging <a href="%s" class="button">View Logs</a>', 'cryptomarket'), $logs_href),
                     'default' => 'no',
-                    'description' => sprintf(__('Log cryptomarket events, such as IPN requests, inside <code>%s</code>', 'cryptomarket'), wc_get_log_file_path('cryptomarket')),
+                    'description' => sprintf(__('Log cryptomarket events, inside <code>%s</code>', 'cryptomarket'), wc_get_log_file_path('cryptomarket')),
                     'desc_tip' => true,
                 ),
                 'support_details' => array(
@@ -162,21 +178,21 @@ function woocommerce_cryptomarket_init() {
         /**
          * Validate API Token
          */
-        public function validateApiTokenField() {
+        public function validate_api_token_field() {
             return '';
         }
 
         /**
          * Validate Support Details
          */
-        public function validateSupportDetailsField() {
+        public function validate_support_details_field() {
             return '';
         }
 
         /**
          * Validate Notification URL
          */
-        public function validateUrlField($key) {
+        public function validate_url_field($key) {
             $url = $this->get_option($key);
 
             if (isset($_POST[$this->plugin_id . $this->id . '_' . $key])) {
@@ -192,7 +208,7 @@ function woocommerce_cryptomarket_init() {
         /**
          * Output for the order received page.
          */
-        public function thankyouPage($order_id) {
+        public function thankyou_page($order_id) {
             $this->log('[Info] Entered thankyou_page with order_id =  ' . $order_id);
 
             // Intentionally blank.
@@ -206,7 +222,7 @@ function woocommerce_cryptomarket_init() {
          * @param   int     $order_id
          * @return  array
          */
-        public function processPayment($order_id) {
+        public function process_payment($order_id) {
             $this->log('[Info] Entered process_payment() with order_id = ' . $order_id . '...');
 
             if (true === empty($order_id)) {
@@ -221,22 +237,46 @@ function woocommerce_cryptomarket_init() {
                 throw new \Exception('The cryptomarket payment plugin was called to process a payment but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             }
 
-            $this->log('[Info] The variable thanks_link = ' . $thanks_link . '...');
-
             // Setup the currency
             $currency_code = get_woocommerce_currency();
 
-            // Setup the Invoice
-            $invoice = new \cryptomarket\Invoice();
+            // var_dump($order->get_order_item_totals());
+            // echo json_encode($order->get_total());
+            // echo json_encode($order->get_total());
+            // wp_die();
 
-            if (false === isset($invoice) || true === empty($invoice)) {
-                $this->log('    [Error] The cryptomarket payment plugin was called to process a payment but could not instantiate an Invoice object.');
-                throw new \Exception('The cryptomarket payment plugin was called to process a payment but could not instantiate an Invoice object. Cannot continue!');
-            } else {
-                $this->log('    [Info] Invoice object created successfully...');
+            try {
+                $result = $this->client->getTicker(array('market' => 'ETH' . $currency_code));
+            } catch (Exception $e) {
+                throw new \Exception('Currency does not supported: ' . $currency_code);
             }
 
-            $order_total = $order->calculate_totals();
+            //Min value validation
+            $min_value = (float) $result[0]['bid'] * 0.001;
+            $total_order = (float) $order->get_total();
+
+            if ($total_order > $min_value) {
+                try {
+                    $payment = array(
+                        'payment_receiver' => $this->get_option('payment_receiver');,
+                        'to_receive_currency' => $currency_code,
+                        'to_receive' => $total_order,
+                        'external_id' => $cart->id,
+                        'callback_url' => $redirect_url,
+                        'error_url' => $this->context->link->getPagelink('order&step=3'),
+                        'success_url' => $redirect_url,
+                        'refund_email' => $this->context->customer->email,
+                    );
+
+                    $payload = $this->client->createPayOrder($payment);
+                    
+                    
+                } catch (Exception $e) {
+                    throw new \Exception($e->getMessage());
+                }
+            } else {
+                throw new \Exception('Total order must be greater than ' . $min_value);
+            }
 
             // Reduce stock levels
             if (function_exists('wc_reduce_stock_levels')) {
@@ -248,7 +288,13 @@ function woocommerce_cryptomarket_init() {
             // Remove cart
             WC()->cart->empty_cart();
 
-            $this->log('    [Info] Leaving process_payment()...');
+            $this->log('[Info] Leaving process_payment()...');
+
+            // Redirect the customer to the CryptoMarket invoice
+            return array(
+                'result'   => 'success',
+                'redirect' => $invoice->getUrl(),
+            );
 
         }
 
@@ -296,7 +342,7 @@ function woocommerce_cryptomarket_init() {
         return $links;
     }
 
-    function actionWoocommerceThankyouCryptomarket($order_id) {
+    function action_woocommerce_thankyou_cryptomarket($order_id) {
         $wc_order = wc_get_order($order_id);
 
         if ($wc_order === false) {
@@ -332,7 +378,7 @@ function woocommerce_cryptomarket_init() {
     add_action("woocommerce_thankyou_cryptomarket", 'action_woocommerce_thankyou_cryptomarket', 10, 1);
 }
 
-function woocommerceCryptomarketFailedRequirements() {
+function woocommerce_cryptomarket_failed_requirements() {
     global $wp_version;
     global $woocommerce;
 
@@ -365,7 +411,7 @@ function woocommerceCryptomarketFailedRequirements() {
 // Activating the plugin
 function woocommerce_cryptomarket_activate() {
     // Check for Requirements
-    $failed = woocommerceCryptomarketFailedRequirements();
+    $failed = woocommerce_cryptomarket_failed_requirements();
 
     $plugins_url = admin_url('plugins.php');
 
