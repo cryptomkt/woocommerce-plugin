@@ -1,13 +1,13 @@
 <?php
 /*
-Plugin Name: cryptomarket for WooCommerce
-Plugin URI:  https://cryptomarket.com
-Description: Enable your WooCommerce store to accept Bitcoin with cryptomarket.
-Author:      cryptomarket
-Text Domain: cryptomarket
-Author URI:  https://cryptomarket.com
+Plugin Name: Cryptomarket for WooCommerce
+Plugin URI:  https://www.cryptomkt.com
+Description: Enable your WooCommerce store to accept Ethereum with Cryptomarket.
+Author:      Cryptomarket Team
+Text Domain: Cryptomarket
+Author URI:  https://www.cryptomkt.com
 
-Version:           2.2.14
+Version:           1.1.12
 License:           Copyright 2011-2018 cryptomarket Inc., MIT License
 License URI:       https://github.com/cryptomkt/woocommerce-plugin/blob/master/LICENSE
 GitHub Plugin URI: https://github.com/cryptomkt/woocommerce-plugin
@@ -75,13 +75,6 @@ function woocommerce_cryptomarket_init() {
             //Show setting errors
             if(function_exists('settings_errors')) settings_errors();
 
-            // Setup the cryptomarket client
-            $configuration = Cryptomkt\Exchange\Configuration::apiKey(
-                $this->get_option('api_key'), 
-                $this->get_option('api_secret')
-                );
-            $this->client = Cryptomkt\Exchange\Client::create($configuration);
-
             // Valid for use and IPN Callback
             if (false === $this->is_valid_for_use()) {
                 $this->enabled = 'no';
@@ -105,6 +98,13 @@ function woocommerce_cryptomarket_init() {
                 empty($this->get_option('api_secret'))) {
                 return false;
             }
+
+            // Setup the cryptomarket client
+            $configuration = Cryptomkt\Exchange\Configuration::apiKey(
+                $this->get_option('api_key'), 
+                $this->get_option('api_secret')
+                );
+            $this->client = Cryptomkt\Exchange\Client::create($configuration);
 
             // Ensure the currency is supported by cryptomarket
             $currency = get_woocommerce_currency();
@@ -216,40 +216,6 @@ function woocommerce_cryptomarket_init() {
         }
 
         /**
-         * Validate Support Details
-         */
-        public function validate_support_details_field() {
-            return '';
-        }
-
-        /**
-         * Validate Notification URL
-         */
-        public function validate_url_field($key) {
-            $url = $this->get_option($key);
-
-            if (isset($_POST[$this->plugin_id . $this->id . '_' . $key])) {
-                if (filter_var($_POST[$this->plugin_id . $this->id . '_' . $key], FILTER_VALIDATE_URL) !== false) {
-                    $url = $_POST[$this->plugin_id . $this->id . '_' . $key];
-                } else {
-                    $url = '';
-                }
-            }
-            return $url;
-        }
-
-        /**
-         * Output for the order received page.
-         */
-        public function thankyou_page($order_id) {
-            $this->log('[Info] Entered thankyou_page with order_id =  ' . $order_id);
-
-            // Intentionally blank.
-
-            $this->log('[Info] Leaving thankyou_page with order_id =  ' . $order_id);
-        }
-
-        /**
          * Process the payment and return the result
          *
          * @param   int     $order_id
@@ -290,7 +256,7 @@ function woocommerce_cryptomarket_init() {
 
             if ($total_order > $min_value) {
                 try {
-                    $order->update_status('on-hold', __( 'Awaiting ethereum payment', 'woocommerce' ));
+                    // $order->update_status('on-hold', __( 'Awaiting ethereum payment', 'woocommerce' ));
                     $success_return_url = $this->get_return_url($order);
 
                     $payment = array(
@@ -306,40 +272,24 @@ function woocommerce_cryptomarket_init() {
 
                     $payload = $this->client->createPayOrder($payment);
 
-                    echo json_encode($payload);
-                    wp_die();
-
                     // Redirect the customer to the CryptoMarket invoice
                     return array(
                         'result'   => 'success',
-                        'redirect' => $invoice->getUrl(),
+                        'redirect' => $payload['payment_url'],
                     );
                     
                     
                 } catch (Exception $e) {
+                    $this->log('--------->'.$this->get_option('api_key'));
+                    
                     throw new \Exception($e->getMessage());
                 }
             } else {
                 throw new \Exception('Total order must be greater than ' . $min_value);
             }
 
-            // Reduce stock levels
-            if (function_exists('wc_reduce_stock_levels')) {
-                wc_reduce_stock_levels($order_id);
-            } else {
-                $order->reduce_order_stock();
-            }
-
-            // Remove cart
-            WC()->cart->empty_cart();
 
             $this->log('[Info] Leaving process_payment()...');
-
-            // // Redirect the customer to the CryptoMarket invoice
-            // return array(
-            //     'result'   => 'success',
-            //     'redirect' => $invoice->getUrl(),
-            // );
 
         }
 
