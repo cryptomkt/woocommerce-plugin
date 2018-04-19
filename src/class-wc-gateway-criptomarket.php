@@ -64,14 +64,17 @@ function woocommerce_cryptomarket_init() {
             $this->debug_plugin_version = get_option('woocommerce_cryptomarket_version');
 
             $this->log('cryptomarket Woocommerce payment plugin object constructor called. Plugin is v' . $this->debug_plugin_version . ' and server is PHP v' . $this->debug_php_version);
-            $this->log('[Info] $this->payment_receiver   = ' . $this->payment_receiver);
-            $this->log('[Info] $this->api_key            = ' . $this->api_key);
-            $this->log('[Info] $this->api_secret         = ' . $this->api_secret);
+            $this->log('[Info] $this->payment_receiver   = ' . $this->get_option('payment_receiver'));
+            $this->log('[Info] $this->api_key            = ' . $this->get_option('api_key'));
+            $this->log('[Info] $this->api_secret         = ' . $this->get_option('api_secret'));
 
             // Actions
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
             // add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'save_order_states'));
             
+            //Show setting errors
+            if(function_exists('settings_errors')) settings_errors();
+
             // Setup the cryptomarket client
             $configuration = Cryptomkt\Exchange\Configuration::apiKey(
                 $this->get_option('api_key'), 
@@ -89,8 +92,6 @@ function woocommerce_cryptomarket_init() {
                 // add_action('woocommerce_api_wc_gateway_cryptomarket', array($this, 'ipn_callback'));
             }
 
-
-
             $this->is_initialized = true;
         }
 
@@ -99,9 +100,9 @@ function woocommerce_cryptomarket_init() {
 
         public function is_valid_for_use() {
             // Check that API credentials are set
-            if (true === is_null($this->payment_receiver) ||
-                true === is_null($this->api_key) ||
-                true === is_null($this->api_secret)) {
+            if (empty($this->get_option('payment_receiver')) ||
+                empty($this->get_option('api_key')) ||
+                empty($this->get_option('api_secret'))) {
                 return false;
             }
 
@@ -145,25 +146,22 @@ function woocommerce_cryptomarket_init() {
                 ),
                 'payment_receiver' => array(
                     'title' => __('Payment Receiver', 'cryptomarket'),
-                    'type' => 'text',
+                    'type' => 'paymentreceivertext',
                     'description' => __('Email from .', 'cryptomarket'),
                     'default' => __('user@domain.com', 'cryptomarket'),
-                    'desc_tip' => true,
-                    'validate' => 'required'
+                    'desc_tip' => true
                 ),
                 'api_key' => array(
                     'title' => __('API Key', 'cryptomarket'),
-                    'type' => 'text',
+                    'type' => 'apikeytext',
                     'description' => __('API Key of you CryptoMarket account.', 'cryptomarket'),
-                    'desc_tip' => true,
-                    'validate' => 'required'
+                    'desc_tip' => true
                 ),
                 'api_secret' => array(
                     'title' => __('API Secret', 'cryptomarket'),
-                    'type' => 'text',
+                    'type' => 'apisecrettext',
                     'description' => __('API Secret of you CryptoMarket account.', 'cryptomarket'),
-                    'desc_tip' => true,
-                    'validate' => 'required'
+                    'desc_tip' => true
                 ),
                 'debug' => array(
                     'title' => __('Debug Log', 'cryptomarket'),
@@ -185,17 +183,36 @@ function woocommerce_cryptomarket_init() {
         }
 
         /**
+         * Validate Payment Receiver
+         */
+        public function validate_paymentreceivertext_field($key, $value) {
+            if( true === empty($value) ){
+                add_settings_error($key, esc_attr( 'settings_updated' ), 'Payment Receiver value is empty', 'error');
+            }else{
+                return $value;
+            }
+        }
+
+        /**
          * Validate API Key
          */
-        public function validate_api_key_field() {
-            return '';
+        public function validate_apikeytext_field($key, $value) {
+            if( true === empty($value) ){
+                add_settings_error($key, esc_attr( 'settings_updated' ), 'API Key value is empty', 'error');
+            }else{
+                return $value;
+            }
         }
 
         /**
          * Validate API Secret
          */
-        public function validate_api_secret_field() {
-            return '';
+        public function validate_apisecrettext_field($key, $value) {
+            if( true === empty($value) ){
+                add_settings_error($key, esc_attr( 'settings_updated' ), 'API Secret value is empty', 'error');
+            }else{
+                return $value;
+            }
         }
 
         /**
@@ -266,16 +283,6 @@ function woocommerce_cryptomarket_init() {
             } catch (Exception $e) {
                 throw new \Exception('Currency does not supported: ' . $currency_code);
             }            
-
-
-
-            // var_dump($order->get_order_item_totals());
-            // echo json_encode($order->get_total());
-            // echo json_encode($order->get_total());
-            // echo json_encode($order->get_user()->data->user_email);
-
-
-
 
             //Min value validation
             $min_value = (float) $result[0]['bid'] * 0.001;
