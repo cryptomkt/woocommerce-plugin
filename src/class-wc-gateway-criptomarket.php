@@ -70,7 +70,7 @@ function woocommerce_cryptomarket_init() {
 
             // Actions
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
-            // add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'save_order_states'));
+            add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'save_order_states'));
             
             //Show setting errors
             if(function_exists('settings_errors')) settings_errors();
@@ -82,7 +82,7 @@ function woocommerce_cryptomarket_init() {
             } else {
                 $this->enabled = 'yes';
                 $this->log('[Info] The plugin is ok to use.');
-                // add_action('woocommerce_api_wc_gateway_cryptomarket', array($this, 'ipn_callback'));
+                add_action('woocommerce_api_wc_gateway_cryptomarket', array($this, 'ipn_callback'));
             }
 
             $this->is_initialized = true;
@@ -163,6 +163,9 @@ function woocommerce_cryptomarket_init() {
                     'description' => __('API Secret of you CryptoMarket account.', 'cryptomarket'),
                     'desc_tip' => true
                 ),
+                'order_states' => array(
+                    'type' => 'order_states'
+                ),
                 'debug' => array(
                     'title' => __('Debug Log', 'cryptomarket'),
                     'type' => 'checkbox',
@@ -181,6 +184,104 @@ function woocommerce_cryptomarket_init() {
             $this->log('[Info] Initialized form fields: ' . var_export($this->form_fields, true));
             $this->log('[Info] Leaving init_form_fields()...');
         }
+
+        /**
+         * HTML output for form field type `order_states`
+         */
+        public function generate_order_states_html()
+        {
+            $this->log('    [Info] Entered generate_order_states_html()...');
+            ob_start();
+            $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid');
+            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-completed', 'invalid'=>'wc-failed');
+            $wc_statuses = wc_get_order_statuses();
+            ?>
+            <tr valign="top">
+                <th scope="row" class="titledesc">Order States:</th>
+                <td class="forminp" id="cryptomarket_order_states">
+                    <table cellspacing="0">
+                        <?php
+                            foreach ($bp_statuses as $bp_state => $bp_name) {
+                            ?>
+                            <tr>
+                            <th><?php echo $bp_name; ?></th>
+                            <td>
+                                <select name="woocommerce_cryptomarket_order_states[<?php echo $bp_state; ?>]">
+                                <?php
+                                $order_states = get_option('woocommerce_cryptomarket_settings');
+                                $order_states = $order_states['order_states'];
+                                foreach ($wc_statuses as $wc_state => $wc_name) {
+                                    $current_option = $order_states[$bp_state];
+                                    if (true === empty($current_option)) {
+                                        $current_option = $df_statuses[$bp_state];
+                                    }
+                                    if ($current_option === $wc_state) {
+                                        echo "<option value=\"$wc_state\" selected>$wc_name</option>\n";
+                                    } else {
+                                        echo "<option value=\"$wc_state\">$wc_name</option>\n";
+                                    }
+                                }
+                                ?>
+                                </select>
+                            </td>
+                            </tr>
+                            <?php
+                        }
+                        ?>
+                    </table>
+                </td>
+            </tr>
+            <?php
+            $this->log('    [Info] Leaving generate_order_states_html()...');
+            return ob_get_clean();
+        }
+
+        /**
+         * Save order states
+         */
+        public function save_order_states()
+        {
+            $this->log('    [Info] Entered save_order_states()...');
+            $bp_statuses = array(
+                'new'      => 'New Order',
+                'paid'      => 'Paid',
+                'confirmed' => 'Confirmed',
+                'complete'  => 'Complete',
+                'invalid'   => 'Invalid',
+            );
+            $wc_statuses = wc_get_order_statuses();
+            if (true === isset($_POST['woocommerce_criptomarket_order_states'])) {
+                $bp_settings = get_option('woocommerce_cryptomarket_settings');
+                $order_states = $bp_settings['order_states'];
+                foreach ($bp_statuses as $bp_state => $bp_name) {
+                    if (false === isset($_POST['woocommerce_cryptomarket_order_states'][ $bp_state ])) {
+                        continue;
+                    }
+                    $wc_state = $_POST['woocommerce_cryptomarket_order_states'][ $bp_state ];
+                    if (true === array_key_exists($wc_state, $wc_statuses)) {
+                        $this->log('    [Info] Updating order state ' . $bp_state . ' to ' . $wc_state);
+                        $order_states[$bp_state] = $wc_state;
+                    }
+                }
+                $bp_settings['order_states'] = $order_states;
+                update_option('woocommerce_cryptomarket_settings', $bp_settings);
+            }
+            $this->log('    [Info] Leaving save_order_states()...');
+        }
+
+        /**
+         * Validate Order States
+         */
+        public function validate_order_states_field()
+        {
+            $order_states = $this->get_option('order_states');
+            if ( isset( $_POST[ $this->plugin_id . $this->id . '_order_states' ] ) ) {
+                $order_states = $_POST[ $this->plugin_id . $this->id . '_order_states' ];
+            }
+
+            return $order_states;
+        }
+
 
         /**
          * Validate Payment Receiver
@@ -241,6 +342,14 @@ function woocommerce_cryptomarket_init() {
                 throw new \Exception('The API Credentials is missing, please set in WooCommerce checkout configuration.');
             }
 
+            // Mark new order according to user settings (we're awaiting the payment)
+            $new_order_states = $this->get_option('order_states');
+            $new_order_status = $new_order_states['new'];
+            $this->log('    [Info] Changing order status to: '.$new_order_status);
+
+            $order->update_status($new_order_status);
+            $this->log('    [Info] Changed order status result');
+
             // Setup the currency
             $currency_code = get_woocommerce_currency();
             
@@ -259,29 +368,28 @@ function woocommerce_cryptomarket_init() {
                     // $order->update_status('on-hold', __( 'Awaiting ethereum payment', 'woocommerce' ));
                     $success_return_url = $this->get_return_url($order);
 
-                    $payment = array(
-                        'payment_receiver' => $this->get_option('payment_receiver'),
-                        'to_receive_currency' => $currency_code,
-                        'to_receive' => $total_order,
-                        'external_id' => $order->get_transaction_id(),
-                        'callback_url' => $success_return_url,
-                        'error_url' => WC()->cart->get_checkout_url(),
-                        'success_url' => $success_return_url,
-                        'refund_email' => $order->get_billing_email(),
-                    );
+                    // $payment = array(
+                    //     'payment_receiver' => $this->get_option('payment_receiver'),
+                    //     'to_receive_currency' => $currency_code,
+                    //     'to_receive' => $total_order,
+                    //     'external_id' => $order->get_transaction_id(),
+                    //     'callback_url' => $success_return_url,
+                    //     'error_url' => WC()->cart->get_checkout_url(),
+                    //     'success_url' => $success_return_url,
+                    //     'refund_email' => $order->get_billing_email(),
+                    // );
 
-                    $payload = $this->client->createPayOrder($payment);
+                    // $payload = $this->client->createPayOrder($payment);
 
                     // Redirect the customer to the CryptoMarket invoice
                     return array(
                         'result'   => 'success',
-                        'redirect' => $payload['payment_url'],
+                        // 'redirect' => $payload['payment_url'],
+                        'redirect' => $success_return_url
                     );
                     
                     
                 } catch (Exception $e) {
-                    $this->log('--------->'.$this->get_option('api_key'));
-                    
                     throw new \Exception($e->getMessage());
                 }
             } else {
@@ -291,6 +399,13 @@ function woocommerce_cryptomarket_init() {
 
             $this->log('[Info] Leaving process_payment()...');
 
+        }
+
+        public function ipn_callback($value){
+            foreach ($variable as $key => $value) {
+                # code...
+            }
+            $this->log('QUIEYO MUCHO A MI '.$value);
         }
 
         public function log($message) {
