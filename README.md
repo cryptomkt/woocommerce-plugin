@@ -1,31 +1,7 @@
-# Notice
-
-This is a Community-supported project.
-
-If you are interested in becoming a maintainer of this project, please contact us at integrations@cryptomarket.com. Developers at cryptomarket will attempt to work along the new maintainers to ensure the project remains viable for the foreseeable future.
-
 WooCommerce CryptoMarket Payment Gateway
 =====================
 
-## Build Status
-
-[![Build Status](https://travis-ci.org/cryptomarket/woocommerce-plugin.svg?branch=master)](https://travis-ci.org/cryptomarket/woocommerce-plugin)
-
-## Brief Description
-
-Add the ability to accept bitcoin in WooCommerce via cryptomarket.
-
-## Detail Description
-
-Bitcoin is a powerful new peer-to-peer platform for the next generation of financial technology. The decentralized nature of the Bitcoin network allows for a highly resilient value transfer infrastructure, and this allows merchants to gain greater profits.
-
-This is because there are little to no fees for transferring Bitcoins from one person to another. Unlike other payment methods, Bitcoin payments cannot be reversed, so once you are paid you can ship! No waiting days for a payment to clear.
-
-
-## Quick Start Guide
-
-To get up and running with our plugin quickly, see the GUIDE here: https://github.com/cryptomarket/woocommerce-plugin/blob/master/GUIDE.md
-
+Cryptocurrencies can be safely and simply managed, transferred, bought and settled through CryptoMKT, this plugin allow integrate easily the Ethereum pays with WooCommerce.
 
 ## Development
 
@@ -59,13 +35,13 @@ $ ./node_modules/.bin/grunt build
 
 ## Support
 
-### Cryptomarket Support
+### CryptoMarket Support
 
-* Last Version Tested: Wordpress 4.8.1 WooCommerce 3.1.2
-* [GitHub Issues](https://github.com/cryptomarket/woocommerce-plugin/issues)
+* Last Version Tested: Wordpress 4.9.5 WooCommerce 3.3.5
+* [GitHub Issues](https://github.com/cryptomkt/woocommerce-plugin/issues)
   * Open an issue if you are having issues with this plugin.
-* [Support](https://help.cryptomarket.com)
-  * Cryptomarket merchant support documentation
+* [Support](https://soporte.cryptomkt.com/)
+  * Cryptomarket support team
 
 ### WooCommerce Support
 
@@ -92,12 +68,12 @@ $ ./node_modules/.bin/grunt build
 
 ## Contribute
 
-Would you like to help with this project?  Great!  You don't have to be a developer, either.  If you've found a bug or have an idea for an improvement, please open an [issue](https://github.com/cryptomarket/woocommerce-plugin/issues) and tell us about it.
+Would you like to help with this project?  Great!  You don't have to be a developer, either.  If you've found a bug or have an idea for an improvement, please open an [issue](https://github.com/cryptomkt/woocommerce-plugin/issues) and tell us about it.
 
 If you *are* a developer wanting contribute an enhancement, bugfix or other patch to this project, please fork this repository and submit a pull request detailing your changes.  We review all PRs!
 
-This open source project is released under the [MIT license](http://opensource.org/licenses/MIT) which means if you would like to use this project's code in your own project you are free to do so.  Speaking of, if you have used our code in a cool new project we would like to hear about it!  Please send us an email or post a new thread on [cryptomarket Labs](https://labs.cryptomarket.com).
+This open source project is released under the [MIT license](http://opensource.org/licenses/MIT) which means if you would like to use this project's code in your own project you are free to do so.  Speaking of, if you have used our code in a cool new project we would like to hear about it!  Please send us an email or post a new thread on [CryptoMarket Developers](https://developers.cryptomarket.com).
 
 ## License
 
-Please refer to the [LICENSE](https://github.com/cryptomarket/woocommerce-plugin/blob/master/LICENSE) file that came with this project.
+Please refer to the [LICENSE](https://github.com/cryptomkt/woocommerce-plugin/blob/master/LICENSE) file that came with this project.
