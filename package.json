@@ -2,11 +2,11 @@
   "author": "cryptomarket",
   "name": "woocommerce-plugin",
   "license": "MIT",
-  "description": "cryptomarket payment gateway for WooCommerce",
-  "version": "2.2.14",
+  "description": "CryptoMarket Payment Gateway for WooCommerce",
+  "version": "1.1.10",
   "repository": {
     "type": "git",
-    "url": "git://github.com/cryptomarket/woocommerce-plugin.git"
+    "url": "git://github.com/cryptomkt/woocommerce-plugin.git"
   },
   "dependencies": {},
   "devDependencies": {

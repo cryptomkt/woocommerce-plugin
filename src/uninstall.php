@@ -1,6 +1,6 @@
 <?php
 /**
- * cryptomarket for WooCommerce Uninstall
+ * Cryptomarket for WooCommerce Uninstall
  *
  * @author 		cryptomarket
  */

@@ -7,7 +7,7 @@ Author:      Cryptomarket Team
 Text Domain: Cryptomarket
 Author URI:  https://www.cryptomkt.com
 
-Version:           1.1.12
+Version:           1.1.10
 License:           Copyright 2016-2018 Cryptomarket SPA., MIT License
 License URI:       https://github.com/cryptomkt/woocommerce-plugin/blob/master/LICENSE
 GitHub Plugin URI: https://github.com/cryptomkt/woocommerce-plugin
@@ -76,7 +76,6 @@ function woocommerce_cryptomarket_init() {
                 $this,
                 'update_order_states'
             ));
-
 
             //Show setting errors
             if(function_exists('settings_errors')) settings_errors();
@@ -213,7 +212,6 @@ function woocommerce_cryptomarket_init() {
                 'invalid'=>'wc-failed');
             $wc_statuses = wc_get_order_statuses();
 
-
             ?>
             <tr valign="top">
                 <th scope="row" class="titledesc">Order States:</th>
@@ -251,10 +249,13 @@ function woocommerce_cryptomarket_init() {
                 </td>
             </tr>
             <?php
-            $this->log('    [Info] Leaving generate_order_states_html()...');
+            $this->log('[Info] Leaving generate_order_states_html()...');
             return ob_get_clean();
         }
 
+        /**
+         * [update_order_states wc-api update order status]
+         */
         function update_order_states() {
             if (true === empty($_POST)) {
                 $this->log('[Error] No post data sent to callback handler!');
@@ -366,32 +367,35 @@ function woocommerce_cryptomarket_init() {
          */
         public function save_order_states()
         {
-            $this->log('    [Info] Entered save_order_states()...');
-            $bp_statuses = array(
-                'new'      => 'New Order',
-                'paid'      => 'Paid',
-                'confirmed' => 'Confirmed',
-                'complete'  => 'Complete',
-                'invalid'   => 'Invalid',
+            $this->log('[Info] Entered save_order_states()...');
+
+            $cm_statuses = array(
+                'new'=>'New Order', 
+                'waiting_pay'=>'Waiting for pay', 
+                'waiting_block'=>'Waiting for block', 
+                'waiting_processing' => 'Waiting processing', 
+                'complete'=>'Successful payment', 
+                'invalid'=>'Invalid'
             );
+
             $wc_statuses = wc_get_order_statuses();
             if (true === isset($_POST['woocommerce_criptomarket_order_states'])) {
-                $bp_settings = get_option('woocommerce_cryptomarket_settings');
-                $order_states = $bp_settings['order_states'];
-                foreach ($bp_statuses as $bp_state => $bp_name) {
-                    if (false === isset($_POST['woocommerce_cryptomarket_order_states'][ $bp_state ])) {
+                $cm_settings = get_option('woocommerce_cryptomarket_settings');
+                $order_states = $cm_settings['order_states'];
+                foreach ($cm_statuses as $cm_state => $cm_name) {
+                    if (false === isset($_POST['woocommerce_cryptomarket_order_states'][ $cm_state ])) {
                         continue;
                     }
-                    $wc_state = $_POST['woocommerce_cryptomarket_order_states'][ $bp_state ];
+                    $wc_state = $_POST['woocommerce_cryptomarket_order_states'][ $cm_state ];
                     if (true === array_key_exists($wc_state, $wc_statuses)) {
-                        $this->log('    [Info] Updating order state ' . $bp_state . ' to ' . $wc_state);
-                        $order_states[$bp_state] = $wc_state;
+                        $this->log('[Info] Updating order state ' . $cm_state . ' to ' . $wc_state);
+                        $order_states[$cm_state] = $wc_state;
                     }
                 }
-                $bp_settings['order_states'] = $order_states;
-                update_option('woocommerce_cryptomarket_settings', $bp_settings);
+                $cm_settings['order_states'] = $order_states;
+                update_option('woocommerce_cryptomarket_settings', $cm_settings);
             }
-            $this->log('    [Info] Leaving save_order_states()...');
+            $this->log('[Info] Leaving save_order_states()...');
         }
 
         /**
@@ -470,10 +474,10 @@ function woocommerce_cryptomarket_init() {
             // Mark new order according to user settings (we're awaiting the payment)
             $new_order_states = $this->get_option('order_states');
             $new_order_status = $new_order_states['new'];
-            $this->log('    [Info] Changing order status to: '.$new_order_status);
+            $this->log('[Info] Changing order status to: '.$new_order_status);
 
             $order->update_status($new_order_status);
-            $this->log('    [Info] Changed order status result');
+            $this->log('[Info] Changed order status result');
 
             // Setup the currency
             $currency_code = get_woocommerce_currency();
@@ -583,23 +587,23 @@ function woocommerce_cryptomarket_init() {
 
         switch ($status) {
         case 'on-hold':
-            $status_desctiption = _x('Waiting for payment', 'woocommerce_cryptomarket');
+            $status_description = _x('Waiting for payment', 'woocommerce_cryptomarket');
             break;
         case 'processing':
-            $status_desctiption = _x('Payment processing', 'woocommerce_cryptomarket');
+            $status_description = _x('Payment processing', 'woocommerce_cryptomarket');
             break;
         case 'completed':
-            $status_desctiption = _x('Payment completed', 'woocommerce_cryptomarket');
+            $status_description = _x('Payment completed', 'woocommerce_cryptomarket');
             break;
         case 'failed':
-            $status_desctiption = _x('Payment failed', 'woocommerce_cryptomarket');
+            $status_description = _x('Payment failed', 'woocommerce_cryptomarket');
             break;
         default:
-            $status_desctiption = _x(ucfirst($status), 'woocommerce_cryptomarket');
+            $status_description = _x(ucfirst($status), 'woocommerce_cryptomarket');
             break;
         }
 
-        echo str_replace('{$paymentStatus}', $status_desctiption, $payment_status);
+        echo str_replace('{$paymentStatus}', $status_description, $payment_status);
     }
     add_action("woocommerce_thankyou_cryptomarket", 'action_woocommerce_thankyou_cryptomarket', 10, 1);
 }
