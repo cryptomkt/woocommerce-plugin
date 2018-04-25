@@ -8,7 +8,7 @@ Text Domain: Cryptomarket
 Author URI:  https://www.cryptomkt.com
 
 Version:           1.1.12
-License:           Copyright 2011-2018 cryptomarket Inc., MIT License
+License:           Copyright 2016-2018 Cryptomarket SPA., MIT License
 License URI:       https://github.com/cryptomkt/woocommerce-plugin/blob/master/LICENSE
 GitHub Plugin URI: https://github.com/cryptomkt/woocommerce-plugin
  */
@@ -30,7 +30,7 @@ register_activation_hook(__FILE__, 'woocommerce_cryptomarket_activate');
 function woocommerce_cryptomarket_init() {
     class WC_Gateway_cryptomarket extends WC_Payment_Gateway {
         private $is_initialized = false;
-        private $client;
+        public $client;
 
         /**
          * Constructor for the gateway.
@@ -71,7 +71,13 @@ function woocommerce_cryptomarket_init() {
             // Actions
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
             add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'save_order_states'));
-            
+            // Payment listener/API hook
+            add_action('woocommerce_api_wc_gateway_cryptomarket', array(
+                $this,
+                'update_order_states'
+            ));
+
+
             //Show setting errors
             if(function_exists('settings_errors')) settings_errors();
 
@@ -82,7 +88,6 @@ function woocommerce_cryptomarket_init() {
             } else {
                 $this->enabled = 'yes';
                 $this->log('[Info] The plugin is ok to use.');
-                add_action('woocommerce_api_wc_gateway_cryptomarket', array($this, 'ipn_callback'));
             }
 
             $this->is_initialized = true;
@@ -113,7 +118,6 @@ function woocommerce_cryptomarket_init() {
                 $result = $this->client->getTicker(array('market' => 'ETH' . $currency));
             } catch (Exception $e) {
                 $this->log('Currency does not supported: ' . $currency);
-                throw new \Exception('Currency does not supported: ' . $currency);
             }
 
             $this->log('[Info] Plugin is valid for use.');
@@ -192,28 +196,43 @@ function woocommerce_cryptomarket_init() {
         {
             $this->log('    [Info] Entered generate_order_states_html()...');
             ob_start();
-            $bp_statuses = array('new'=>'New Order', 'paid'=>'Paid', 'confirmed'=>'Confirmed', 'complete'=>'Complete', 'invalid'=>'Invalid');
-            $df_statuses = array('new'=>'wc-on-hold', 'paid'=>'wc-processing', 'confirmed'=>'wc-processing', 'complete'=>'wc-completed', 'invalid'=>'wc-failed');
+            $cm_statuses = array(
+                'new'=>'New Order', 
+                'waiting_pay'=>'Waiting for pay', 
+                'waiting_block'=>'Waiting for block', 
+                'waiting_processing' => 'Waiting processing', 
+                'complete'=>'Successful payment', 
+                'invalid'=>'Invalid');
+            
+            $df_statuses = array(
+                'new'=>'wc-on-hold', 
+                'waiting_pay'=>'wc-processing', 
+                'waiting_block'=>'wc-processing', 
+                'waiting_processing'=>'wc-processing', 
+                'complete'=>'wc-completed', 
+                'invalid'=>'wc-failed');
             $wc_statuses = wc_get_order_statuses();
+
+
             ?>
             <tr valign="top">
                 <th scope="row" class="titledesc">Order States:</th>
                 <td class="forminp" id="cryptomarket_order_states">
                     <table cellspacing="0">
                         <?php
-                            foreach ($bp_statuses as $bp_state => $bp_name) {
+                            foreach ($cm_statuses as $cm_state => $cm_name) {
                             ?>
                             <tr>
-                            <th><?php echo $bp_name; ?></th>
+                            <th><?php echo $cm_name; ?></th>
                             <td>
-                                <select name="woocommerce_cryptomarket_order_states[<?php echo $bp_state; ?>]">
+                                <select name="woocommerce_cryptomarket_order_states[<?php echo $cm_state; ?>]">
                                 <?php
                                 $order_states = get_option('woocommerce_cryptomarket_settings');
                                 $order_states = $order_states['order_states'];
                                 foreach ($wc_statuses as $wc_state => $wc_name) {
-                                    $current_option = $order_states[$bp_state];
+                                    $current_option = $order_states[$cm_state];
                                     if (true === empty($current_option)) {
-                                        $current_option = $df_statuses[$bp_state];
+                                        $current_option = $df_statuses[$cm_state];
                                     }
                                     if ($current_option === $wc_state) {
                                         echo "<option value=\"$wc_state\" selected>$wc_name</option>\n";
@@ -234,6 +253,112 @@ function woocommerce_cryptomarket_init() {
             <?php
             $this->log('    [Info] Leaving generate_order_states_html()...');
             return ob_get_clean();
+        }
+
+        function update_order_states() {
+            if (true === empty($_POST)) {
+                $this->log('[Error] No post data sent to callback handler!');
+                error_log('[Error] Plugin received empty POST data for an callback_url message.');
+                wp_die('No post data');
+            } else {
+                $this->log('[Info] The post data sent from server is present...');
+            }
+
+            $payload = (object) $_POST;
+
+            if (true === empty($payload)) {
+                $this->log('[Error] Invalid JSON payload: ' . $post_body);
+                error_log('[Error] Invalid JSON payload: ' . $post_body);
+                wp_die('Invalid JSON');
+            } else {
+                $this->log('[Info] The post data was decoded into JSON...');
+            }
+
+            if (false === array_key_exists('id', $payload)) {
+                $this->log('[Error] No ID present in payload: ' . var_export($payload, true));
+                error_log('[Error] Plugin did not receive an Order ID present in payload: ' . var_export($payload, true));
+                wp_die('No Order ID');
+            } else {
+                $this->log('[Info] Order ID present in payload...');
+            }
+
+            if (false === array_key_exists('external_id', $payload)) {
+                $this->log('[Error] No Order ID present in payload: ' . var_export($payload, true));
+                error_log('[Error] Plugin did not receive an Order ID present in payload: ' . var_export($payload, true));
+                wp_die('No Order ID');
+            } else {
+                $this->log('[Info] Order ID present in JSON payload...');
+            }
+
+            $order_id = $payload->external_id; $this->log('[Info] Order ID:' . $order_id);
+            $order = wc_get_order($order_id);
+            $order_states = $this->get_option('order_states');
+
+            if (false === $order || 'WC_Order' !== get_class($order)) {
+                $this->log('[Error] The Plugin was called but could not retrieve the order details for order_id: "' . $order_id . '". If you use an alternative order numbering system, please see class-wc-gateway-cryptomarket.php to apply a search filter.');
+                throw new \Exception('The Plugin was called but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
+            } else {
+                $this->log('[Info] Order details retrieved successfully...');
+            }
+
+            $current_status = $order->get_status();
+            if (false === isset($current_status) && true === empty($current_status)) {
+                $this->log('[Error] The Plugin was calledbut could not obtain the current status from the order.');
+                throw new \Exception('The Plugin was called but could not obtain the current status from the order. Cannot continue!');
+            } else {
+                $this->log('[Info] The current order status for this order is ' . $current_status);
+            }
+
+            switch ($payload->status) {
+                case "-4":
+                    $this->log('[Info] Pago múltiple. Orden ID:'.$order_id);
+                    $order->update_status($order_states['invalid']);
+
+                    wp_die('Pago Multiple');
+                    break;
+                case "-3":
+                    $this->log('[Info] Monto pagado no concuerda. Orden ID:'.$order_id);
+                    $order->update_status($order_states['invalid']);
+
+                    wp_die('Monto pagado no concuerda');
+                    break;
+                case "-2":
+                    $this->log('[Info] Falló conversión. Orden ID:'.$order_id);
+                    $order->update_status($order_states['invalid']);
+
+                    wp_die('Falló conversión');
+                    break;
+                case "-1":
+                    $this->log('[Info] Expiró orden de pago. Orden ID:'.$order_id);
+                    $order->update_status($order_states['invalid']);
+
+                    wp_die('Expiró orden de pago');
+                    break;
+                case "0":
+                    $this->log('[Info] Esperando pago. Orden ID:'.$order_id);
+                    $order->update_status($order_states['waiting_pay']);
+
+                    break;
+                case "1":
+                    $this->log('[Info] Esperando bloque. Orden ID:'.$order_id);
+                    $order->update_status($order_states['waiting_block']);
+
+                    break;
+                case "2":
+                    $this->log('[Info] Esperando procesamiento. Orden ID:'.$order_id);
+                    $order->update_status($order_states['waiting_processing']);
+
+                    break;
+                case "3":
+                    $this->log('[Info] Pago exitoso. Orden ID:'.$order_id);
+                    $order->update_status($order_states['complete']);
+                    break;
+
+                default:
+                    $this->log('[Error] No status payment defined:'.$payload->status.'. Order ID:'.$order_id);
+                    break;
+            }
+            exit;
         }
 
         /**
@@ -365,27 +490,26 @@ function woocommerce_cryptomarket_init() {
 
             if ($total_order > $min_value) {
                 try {
-                    // $order->update_status('on-hold', __( 'Awaiting ethereum payment', 'woocommerce' ));
+
                     $success_return_url = $this->get_return_url($order);
 
-                    // $payment = array(
-                    //     'payment_receiver' => $this->get_option('payment_receiver'),
-                    //     'to_receive_currency' => $currency_code,
-                    //     'to_receive' => $total_order,
-                    //     'external_id' => $order->get_transaction_id(),
-                    //     'callback_url' => $success_return_url,
-                    //     'error_url' => WC()->cart->get_checkout_url(),
-                    //     'success_url' => $success_return_url,
-                    //     'refund_email' => $order->get_billing_email(),
-                    // );
+                    $payment = array(
+                        'payment_receiver' => $this->get_option('payment_receiver'),
+                        'to_receive_currency' => $currency_code,
+                        'to_receive' => $total_order,
+                        'external_id' => $order->get_id(),
+                        'callback_url' => str_replace('https:', 'http:', add_query_arg('wc-api','WC_Gateway_cryptomarket', home_url( '/' ))),
+                        'error_url' => WC()->cart->get_checkout_url(),
+                        'success_url' => $success_return_url,
+                        'refund_email' => $order->get_billing_email(),
+                    );
 
-                    // $payload = $this->client->createPayOrder($payment);
+                    $payload = $this->client->createPayOrder($payment);
 
                     // Redirect the customer to the CryptoMarket invoice
                     return array(
                         'result'   => 'success',
-                        // 'redirect' => $payload['payment_url'],
-                        'redirect' => $success_return_url
+                        'redirect' => $payload['payment_url']
                     );
                     
                     
@@ -396,16 +520,8 @@ function woocommerce_cryptomarket_init() {
                 throw new \Exception('Total order must be greater than ' . $min_value);
             }
 
-
             $this->log('[Info] Leaving process_payment()...');
 
-        }
-
-        public function ipn_callback($value){
-            foreach ($variable as $key => $value) {
-                # code...
-            }
-            $this->log('QUIEYO MUCHO A MI '.$value);
         }
 
         public function log($message) {
@@ -539,7 +655,7 @@ function woocommerce_cryptomarket_activate() {
             }
         }
 
-        update_option('woocommerce_cryptomarket_version', '2.2.14');
+        update_option('woocommerce_cryptomarket_version', '1.1.10');
 
     } else {
         // Requirements not met, return an error message
