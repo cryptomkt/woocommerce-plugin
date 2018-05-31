@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "cryptomkt/cryptomkt": "1.1.x-dev"
+        "cryptomkt/cryptomkt-guzzle-php": "dev-master"
     },
 	"require-dev": {
         "wp-cli/wp-cli": "*",
