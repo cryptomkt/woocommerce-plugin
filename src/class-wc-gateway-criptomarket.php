@@ -7,7 +7,7 @@ Author:      Cryptomarket Team
 Text Domain: Cryptomarket
 Author URI:  https://www.cryptomkt.com
 
-Version:           1.1.10
+Version:           0.1
 License:           Copyright 2016-2018 Cryptomarket SPA., MIT License
 License URI:       https://github.com/cryptomkt/woocommerce-plugin/blob/master/LICENSE
 GitHub Plugin URI: https://github.com/cryptomkt/woocommerce-plugin
@@ -658,7 +658,7 @@ function woocommerce_cryptomarket_activate() {
             }
         }
 
-        update_option('woocommerce_cryptomarket_version', '1.1.10');
+        update_option('woocommerce_cryptomarket_version', '0.1');
 
     } else {
         // Requirements not met, return an error message
