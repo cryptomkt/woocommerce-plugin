@@ -489,7 +489,7 @@ function woocommerce_cryptomarket_init() {
             }            
 
             //Min value validation
-            $min_value = (float) $result['data'][0]['bid'] * 0.001;
+            $min_value = (float) $result->data[0]->bid * 0.001;
             $total_order = (float) $order->get_total();
 
             if ($total_order > $min_value) {
@@ -513,9 +513,8 @@ function woocommerce_cryptomarket_init() {
                     // Redirect the customer to the CryptoMarket invoice
                     return array(
                         'result'   => 'success',
-                        'redirect' => $payload['data']['payment_url'])
+                        'redirect' => $payload->data->payment_url
                     );
-                    
                     
                 } catch (Exception $e) {
                     throw new \Exception($e->getMessage());
