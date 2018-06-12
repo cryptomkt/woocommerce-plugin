@@ -510,12 +510,16 @@ function woocommerce_cryptomarket_init() {
 
                     $payload = $this->client->createPayOrder($payment);
 
-                    // Redirect the customer to the CryptoMarket invoice
-                    return array(
-                        'result'   => 'success',
-                        'redirect' => $payload->data->payment_url
-                    );
-                    
+                    if($payload->status === 'error'){
+                        throw new \Exception($payload->message);
+                    }
+                    else{
+                        // Redirect the customer to the CryptoMarket invoice
+                        return array(
+                            'result'   => 'success',
+                            'redirect' => $payload->data->payment_url
+                        );
+                    }
                 } catch (Exception $e) {
                     throw new \Exception($e->getMessage());
                 }
