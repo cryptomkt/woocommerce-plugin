@@ -471,14 +471,6 @@ function woocommerce_cryptomarket_init() {
                 throw new \Exception('The API Credentials is missing, please set in WooCommerce checkout configuration.');
             }
 
-            // Mark new order according to user settings (we're awaiting the payment)
-            $new_order_states = $this->get_option('order_states');
-            $new_order_status = $new_order_states['new'];
-            $this->log('[Info] Changing order status to: '.$new_order_status);
-
-            $order->update_status($new_order_status);
-            $this->log('[Info] Changed order status result');
-
             // Setup the currency
             $currency_code = get_woocommerce_currency();
             
@@ -514,6 +506,14 @@ function woocommerce_cryptomarket_init() {
                         throw new \Exception($payload->message);
                     }
                     else{
+                        // Mark new order according to user settings (we're awaiting the payment)
+                        $new_order_states = $this->get_option('order_states');
+                        $new_order_status = $new_order_states['new'];
+                        $this->log('[Info] Changing order status to: '.$new_order_status);
+
+                        $order->update_status($new_order_status);
+                        $this->log('[Info] Changed order status result');
+                                                
                         // Redirect the customer to the CryptoMarket invoice
                         return array(
                             'result'   => 'success',
