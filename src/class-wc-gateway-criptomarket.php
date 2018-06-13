@@ -2,9 +2,9 @@
 /*
 Plugin Name: Cryptomarket for WooCommerce
 Plugin URI:  https://www.cryptomkt.com
-Description: Enable your WooCommerce store to accept Ethereum with Cryptomarket.
-Author:      Cryptomarket Team
-Text Domain: Cryptomarket
+Description: Accept multiple cryptocurrencies and turn into local currency as EUR, CLP, BRL and ARS on your WooCommerce store..
+Author:      CryptoMarket Dev Team
+Text Domain: CryptoMarket
 Author URI:  https://www.cryptomkt.com
 
 Version:           0.1
