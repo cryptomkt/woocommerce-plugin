@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Cryptomarket for WooCommerce
+Plugin Name: CryptoCompra for WooCommerce by CryptoMarket
 Plugin URI:  https://www.cryptomkt.com
 Description: Accept multiple cryptocurrencies and turn into local currency as EUR, CLP, BRL and ARS on your WooCommerce store..
 Author:      CryptoMarket Dev Team
