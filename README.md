@@ -54,7 +54,7 @@ $ ./node_modules/.bin/grunt build
 1. Ensure a valid SSL certificate is installed on your server. Also ensure your root CA cert is updated. If your CA cert is not current, you will see curl SSL verification errors.
 2. Verify that your web server is not blocking POSTs from servers it may not recognize. Double check this on your firewall as well, if one is being used.
 3. Check the version of this plugin against the official plugin repository to ensure you are using the latest version. Your issue might have been addressed in a newer version! See the [Releases](https://github.com/cryptomarket/woocommerce-plugin/releases) page for the latest.
-4. If all else fails, enable debug logging in the plugin options and send the log along with an email describing your issue **in detail** to support@cryptomarket.com
+4. If all else fails, enable debug logging in the plugin options and send the log along with an email describing your issue **in detail** to support@cryptomkt.com
 
 **TIP**: When contacting support it will help us is you provide:
 
@@ -72,7 +72,7 @@ Would you like to help with this project?  Great!  You don't have to be a develo
 
 If you *are* a developer wanting contribute an enhancement, bugfix or other patch to this project, please fork this repository and submit a pull request detailing your changes.  We review all PRs!
 
-This open source project is released under the [MIT license](http://opensource.org/licenses/MIT) which means if you would like to use this project's code in your own project you are free to do so.  Speaking of, if you have used our code in a cool new project we would like to hear about it!  Please send us an email or post a new thread on [CryptoMarket Developers](https://developers.cryptomarket.com).
+This open source project is released under the [MIT license](http://opensource.org/licenses/MIT) which means if you would like to use this project's code in your own project you are free to do so.  Speaking of, if you have used our code in a cool new project we would like to hear about it!  Please send us an email or post a new thread on [CryptoMarket Developers](https://developers.cryptomkt.com).
 
 ## License
 
