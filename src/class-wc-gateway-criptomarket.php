@@ -42,7 +42,7 @@ function woocommerce_cryptomarket_init() {
             $this->has_fields = false;
             $this->order_button_text = __('Proceed to cryptomarket', 'cryptomarket');
             $this->method_title = 'Cryptomarket';
-            $this->method_description = 'Cryptomarket allows you to accept Ethereum payments on your WooCommerce store.';
+            $this->method_description = 'Accept multiple cryptocurrencies and turn into local currency as EUR, CLP, BRL and ARS on your WooCommerce store.';
 
             // Load the settings.
             $this->init_form_fields();
@@ -137,14 +137,14 @@ function woocommerce_cryptomarket_init() {
                     'title' => __('Title', 'cryptomarket'),
                     'type' => 'text',
                     'description' => __('Controls the name of this payment method as displayed to the customer during checkout.', 'cryptomarket'),
-                    'default' => __('CryptoMarket | Ethereum', 'cryptomarket'),
+                    'default' => __('CryptoCompra by CryptoMarket', 'cryptomarket'),
                     'desc_tip' => true,
                 ),
                 'description' => array(
                     'title' => __('Customer Message', 'cryptomarket'),
                     'type' => 'textarea',
                     'description' => __('Message to explain how the customer will be paying for the purchase.', 'cryptomarket'),
-                    'default' => 'You will be redirected to cryptomkt.com to complete your purchase.',
+                    'default' => 'You will be redirected to CryptoMarket to complete your purchase.',
                     'desc_tip' => true,
                 ),
                 'payment_receiver' => array(
