@@ -253,6 +253,10 @@ function woocommerce_cryptomarket_init() {
             return ob_get_clean();
         }
 
+        protected function getHash($algo, $data, $key){
+            return hash_hmac($algo, $data, $key, FALSE);
+        }
+
         /**
          * [update_order_states wc-api update order status]
          */
@@ -289,6 +293,13 @@ function woocommerce_cryptomarket_init() {
                 wp_die('No Order ID');
             } else {
                 $this->log('[Info] Order ID present in JSON payload...');
+            }
+
+            if (false === array_key_exists('signature', $payload) && $payload->signature === (string) $this->getHash('sha384', $payload->id . $payload->status, $this->get_option('api_secret')) ) {
+                error_log('[Error] Request is not signed:' . var_export($payload, true));
+                exit;
+            } else {
+                error_log('[Info] Signature valid present in payload...');
             }
 
             $order_id = $payload->external_id; $this->log('[Info] Order ID:' . $order_id);
@@ -498,6 +509,7 @@ function woocommerce_cryptomarket_init() {
                         'error_url' => WC()->cart->get_checkout_url(),
                         'success_url' => $success_return_url,
                         'refund_email' => $order->get_billing_email(),
+                        'language' => ICL_LANGUAGE_CODE
                     );
 
                     $payload = $this->client->createPayOrder($payment);
