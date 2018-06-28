@@ -509,7 +509,7 @@ function woocommerce_cryptomarket_init() {
                         'error_url' => WC()->cart->get_checkout_url(),
                         'success_url' => $success_return_url,
                         'refund_email' => $order->get_billing_email(),
-                        'language' => ICL_LANGUAGE_CODE
+                        'language' => explode('_', get_locale())[0]
                     );
 
                     $payload = $this->client->createPayOrder($payment);
