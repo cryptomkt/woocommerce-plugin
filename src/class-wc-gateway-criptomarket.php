@@ -105,7 +105,7 @@ function woocommerce_cryptomarket_init() {
 
             // Setup the cryptomarket client
             $configuration = Cryptomkt\Exchange\Configuration::apiKey(
-                $this->get_option('api_key'), 
+                $this->get_option('api_key'),
                 $this->get_option('api_secret')
                 );
             $this->client = Cryptomkt\Exchange\Client::create($configuration);
@@ -196,19 +196,19 @@ function woocommerce_cryptomarket_init() {
             $this->log('    [Info] Entered generate_order_states_html()...');
             ob_start();
             $cm_statuses = array(
-                'new'=>'New Order', 
-                'waiting_pay'=>'Waiting for pay', 
-                'waiting_block'=>'Waiting for block', 
-                'waiting_processing' => 'Waiting processing', 
-                'complete'=>'Successful payment', 
+                'new'=>'New Order',
+                'waiting_pay'=>'Waiting for pay',
+                'waiting_block'=>'Waiting for block',
+                'waiting_processing' => 'Waiting processing',
+                'complete'=>'Successful payment',
                 'invalid'=>'Invalid');
-            
+
             $df_statuses = array(
-                'new'=>'wc-on-hold', 
-                'waiting_pay'=>'wc-processing', 
-                'waiting_block'=>'wc-processing', 
-                'waiting_processing'=>'wc-processing', 
-                'complete'=>'wc-completed', 
+                'new'=>'wc-on-hold',
+                'waiting_pay'=>'wc-processing',
+                'waiting_block'=>'wc-processing',
+                'waiting_processing'=>'wc-processing',
+                'complete'=>'wc-completed',
                 'invalid'=>'wc-failed');
             $wc_statuses = wc_get_order_statuses();
 
@@ -381,11 +381,11 @@ function woocommerce_cryptomarket_init() {
             $this->log('[Info] Entered save_order_states()...');
 
             $cm_statuses = array(
-                'new'=>'New Order', 
-                'waiting_pay'=>'Waiting for pay', 
-                'waiting_block'=>'Waiting for block', 
-                'waiting_processing' => 'Waiting processing', 
-                'complete'=>'Successful payment', 
+                'new'=>'New Order',
+                'waiting_pay'=>'Waiting for pay',
+                'waiting_block'=>'Waiting for block',
+                'waiting_processing' => 'Waiting processing',
+                'complete'=>'Successful payment',
                 'invalid'=>'Invalid'
             );
 
@@ -484,12 +484,12 @@ function woocommerce_cryptomarket_init() {
 
             // Setup the currency
             $currency_code = get_woocommerce_currency();
-            
+
             try {
                 $result = $this->client->getTicker(array('market' => 'ETH' . $currency_code));
             } catch (Exception $e) {
                 throw new \Exception('Currency does not supported: ' . $currency_code);
-            }            
+            }
 
             //Min value validation
             $min_value = (float) $result->data[0]->bid * 0.001;
@@ -525,7 +525,7 @@ function woocommerce_cryptomarket_init() {
 
                         $order->update_status($new_order_status);
                         $this->log('[Info] Changed order status result');
-                                                
+
                         // Redirect the customer to the CryptoMarket invoice
                         return array(
                             'result'   => 'success',
