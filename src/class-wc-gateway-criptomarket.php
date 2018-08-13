@@ -5,9 +5,9 @@ Plugin URI:  https://www.cryptomkt.com
 Description: Accept multiple cryptocurrencies and turn into local currency as EUR, CLP, BRL and ARS on your WooCommerce store..
 Author:      CryptoMarket Dev Team
 Text Domain: CryptoMarket
-Author URI:  https://www.cryptomkt.com
+Author URI:  https://github.com/cryptomkt
 
-Version:           0.1
+Version:           0.1.1
 License:           Copyright 2016-2018 Cryptomarket SPA., MIT License
 License URI:       https://github.com/cryptomkt/woocommerce-plugin/blob/master/LICENSE
 GitHub Plugin URI: https://github.com/cryptomkt/woocommerce-plugin
@@ -20,8 +20,8 @@ if (false === defined('ABSPATH')) {
 
 //composer autoload
 $loader = require __DIR__ . '/lib/autoload.php';
-$loader->add('Cryptomkt\\Exchange\\Client', __DIR__);
-$loader->add('Cryptomkt\\Exchange\\Configuration as CMConfiguration', __DIR__);
+$loader->add('Cryptomkt\\Client', __DIR__);
+$loader->add('Cryptomkt\\Configuration', __DIR__);
 
 // Ensures WooCommerce is loaded before initializing the cryptomarket plugin
 add_action('plugins_loaded', 'woocommerce_cryptomarket_init', 0);
@@ -104,11 +104,11 @@ function woocommerce_cryptomarket_init() {
             }
 
             // Setup the cryptomarket client
-            $configuration = Cryptomkt\Exchange\Configuration::apiKey(
+            $configuration = Cryptomkt\Configuration::apiKey(
                 $this->get_option('api_key'),
                 $this->get_option('api_secret')
                 );
-            $this->client = Cryptomkt\Exchange\Client::create($configuration);
+            $this->client = Cryptomkt\Client::create($configuration);
 
             // Ensure the currency is supported by cryptomarket
             $currency = get_woocommerce_currency();

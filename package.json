@@ -3,7 +3,7 @@
   "name": "woocommerce-plugin",
   "license": "MIT",
   "description": "CryptoMarket Payment Gateway for WooCommerce",
-  "version": "1.1.10",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/cryptomkt/woocommerce-plugin.git"
