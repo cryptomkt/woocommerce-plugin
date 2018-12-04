@@ -42,7 +42,7 @@ function woocommerce_cryptomarket_init() {
             $this->has_fields = false;
             $this->order_button_text = __('Proceed to cryptomarket', 'cryptomarket');
             $this->method_title = 'Cryptomarket';
-            $this->method_description = 'Accept multiple cryptocurrencies and turn into local currency as EUR, CLP, BRL and ARS on your WooCommerce store.';
+            $this->method_description = 'Accept multiple cryptocurrencies and turn into local currency as EUR, CLP, MXN BRL and ARS on your WooCommerce store.';
 
             // Load the settings.
             $this->init_form_fields();
