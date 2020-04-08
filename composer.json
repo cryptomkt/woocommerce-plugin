@@ -4,10 +4,10 @@
           "type": "package",
           "package": {
             "name": "wordpress",
-            "version": "4.8.2",
+            "version": "5.4",
             "dist": {
               "type": "zip",
-              "url": "https://github.com/WordPress/WordPress/archive/4.8.2.zip"
+              "url": "https://github.com/WordPress/WordPress/archive/5.4.zip"
             }
           }
         }

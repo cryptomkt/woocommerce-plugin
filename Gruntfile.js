@@ -1,5 +1,5 @@
 /**
- * @license Copyright 2011-2014 cryptomarket Inc., MIT License 
+ * @license Copyright 2014-2020 cryptomarket Inc., MIT License 
  * see https://github.com/cryptomarket/woocommerce-plugin/blob/master/LICENSE
  */
 
@@ -68,7 +68,7 @@ module.exports = function(grunt) {
     cssmin: {
       build: {
         options: {
-          banner: '/**\n * @license Copyright 2011-2014 cryptomarket Inc., MIT License\n * see https://github.com/cryptomarket/woocommerce-plugin/blob/master/LICENSE\n */'
+          banner: '/**\n * @license Copyright 2014-2020 cryptomarket Inc., MIT License\n * see https://github.com/cryptomarket/woocommerce-plugin/blob/master/LICENSE\n */'
         },
         files: {
           'dist/cryptomarket-for-woocommerce/assets/css/style.css': ['src/assets/css/**.css']

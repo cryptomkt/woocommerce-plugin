@@ -11,6 +11,7 @@
 .buildpath
 composer.lock
 composer.phar
+package-lock.json
 /dist/
 /node_modules/
 npm_debug.log
