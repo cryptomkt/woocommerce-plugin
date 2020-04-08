@@ -1,7 +1,7 @@
 WooCommerce CryptoMarket Payment Gateway
 =====================
 
-Cryptocurrencies can be safely and simply managed, transferred, bought and settled through CryptoMKT, this plugin allow integrate easily the Ethereum pays with WooCommerce.
+Cryptocurrencies can be safely and simply managed, transferred, bought and settled through CryptoMKT, this plugin allow integrate easily Cryptocurrency pays with WooCommerce.
 
 ## Development
 

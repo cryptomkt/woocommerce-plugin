@@ -1,4 +1,6 @@
 {
+  "name": "CryptoMarket for Wordpress Woocommerce",
+  "description": "Cryptocurrencies can be safely and simply managed, transferred, bought and settled through CryptoMKT, this plugin allow integrate easily Cryptocurrency pays with WooCommerce.",
 	"repositories": [
         {
           "type": "package",
