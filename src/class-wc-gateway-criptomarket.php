@@ -306,7 +306,7 @@ function woocommerce_cryptomarket_init() {
             $order = wc_get_order($order_id);
             $order_states = $this->get_option('order_states');
 
-            if (false === $order || 'WC_Order' !== get_class($order)) {
+            if (false === $order) {
                 $this->log('[Error] The Plugin was called but could not retrieve the order details for order_id: "' . $order_id . '". If you use an alternative order numbering system, please see class-wc-gateway-cryptomarket.php to apply a search filter.');
                 throw new \Exception('The Plugin was called but could not retrieve the order details for order_id ' . $order_id . '. Cannot continue!');
             } else {
@@ -506,7 +506,7 @@ function woocommerce_cryptomarket_init() {
                         'to_receive' => $total_order,
                         'external_id' => $order->get_id(),
                         'callback_url' => str_replace('https:', 'http:', add_query_arg('wc-api','WC_Gateway_cryptomarket', home_url( '/' ))),
-                        'error_url' => WC()->cart->get_checkout_url(),
+                        'error_url' => wc_get_checkout_url(),
                         'success_url' => $success_return_url,
                         'refund_email' => $order->get_billing_email(),
                         'language' => explode('_', get_locale())[0]
