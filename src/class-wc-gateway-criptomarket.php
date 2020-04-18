@@ -62,6 +62,7 @@ function woocommerce_cryptomarket_init() {
             // Define debugging & informational settings
             $this->debug_php_version = PHP_MAJOR_VERSION . '.' . PHP_MINOR_VERSION;
             $this->debug_plugin_version = get_option('woocommerce_cryptomarket_version');
+            $this->default_min_value = 500;
 
             $this->log('cryptomarket Woocommerce payment plugin object constructor called. Plugin is v' . $this->debug_plugin_version . ' and server is PHP v' . $this->debug_php_version);
             $this->log('[Info] $this->payment_receiver   = ' . $this->get_option('payment_receiver'));
@@ -363,6 +364,8 @@ function woocommerce_cryptomarket_init() {
                     break;
                 case "3":
                     $this->log('[Info] Pago exitoso. Orden ID:'.$order_id);
+                    $transaction_id = isset($payload->id) ? $payload->id : '';
+                    $order->payment_complete($transaction_id);
                     $order->update_status($order_states['complete']);
                     break;
 
@@ -487,15 +490,19 @@ function woocommerce_cryptomarket_init() {
 
             try {
                 $result = $this->client->getTicker(array('market' => 'ETH' . $currency_code));
+                $this->log('[Info] Get ticket result: '.$result);
+
             } catch (Exception $e) {
                 throw new \Exception('Currency does not supported: ' . $currency_code);
             }
 
             //Min value validation
-            $min_value = (float) $result->data[0]->bid * 0.001;
+            if(isset($result->data[0])){
+                $default_min_value = (float) $result->data[0]->bid * 0.001;
+            }
             $total_order = (float) $order->get_total();
 
-            if ($total_order > $min_value) {
+            if ($total_order > $default_min_value) {
                 try {
 
                     $success_return_url = $this->get_return_url($order);
@@ -505,7 +512,7 @@ function woocommerce_cryptomarket_init() {
                         'to_receive_currency' => $currency_code,
                         'to_receive' => $total_order,
                         'external_id' => $order->get_id(),
-                        'callback_url' => str_replace('https:', 'http:', add_query_arg('wc-api','WC_Gateway_cryptomarket', home_url( '/' ))),
+                        'callback_url' => add_query_arg('wc-api','WC_Gateway_cryptomarket', home_url( '/' )),
                         'error_url' => wc_get_checkout_url(),
                         'success_url' => $success_return_url,
                         'refund_email' => $order->get_billing_email(),
@@ -513,6 +520,7 @@ function woocommerce_cryptomarket_init() {
                     );
 
                     $payload = $this->client->createPayOrder($payment);
+                    $this->log('[Info] Payload result: '.$payload);
 
                     if($payload->status === 'error'){
                         throw new \Exception($payload->message);
