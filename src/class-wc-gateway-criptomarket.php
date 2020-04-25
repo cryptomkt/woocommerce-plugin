@@ -498,11 +498,11 @@ function woocommerce_cryptomarket_init() {
 
             //Min value validation
             if(isset($result->data[0])){
-                $default_min_value = (float) $result->data[0]->bid * 0.001;
+                $this->default_min_value = (float) $result->data[0]->bid * 0.001;
             }
             $total_order = (float) $order->get_total();
 
-            if ($total_order > $default_min_value) {
+            if ($total_order > $this->default_min_value) {
                 try {
 
                     $success_return_url = $this->get_return_url($order);
