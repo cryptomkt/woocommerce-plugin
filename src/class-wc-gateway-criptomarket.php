@@ -490,8 +490,7 @@ function woocommerce_cryptomarket_init() {
 
             try {
                 $result = $this->client->getTicker(array('market' => 'ETH' . $currency_code));
-                $this->log('[Info] Get ticket result: '.$result);
-
+                $this->log('[Info] Get ticket result:'.json_decode( json_encode($result), true));
             } catch (Exception $e) {
                 throw new \Exception('Currency does not supported: ' . $currency_code);
             }
@@ -520,7 +519,7 @@ function woocommerce_cryptomarket_init() {
                     );
 
                     $payload = $this->client->createPayOrder($payment);
-                    $this->log('[Info] Payload result: '.$payload);
+                    $this->log('[Info] Get ticket result:'.json_decode( json_encode($payload), true));
 
                     if($payload->status === 'error'){
                         throw new \Exception($payload->message);
